@@ -9,13 +9,13 @@ describe('User Model', () => {
 
             const gen_id = uuidv4();
             const username = `test-user-${gen_id}`;
-            const password = 'password';
+            const phone_number = '262-751-2483';
 
             // Call the create() method
-            const createdUser = await User.create(username, password, gen_id);
+            const createdUser = await User.create(username, phone_number, gen_id);
 
             // Validate the result
             expect(createdUser.username).toBe(username);
-            expect(createdUser.password).toBe(password);
+            expect(createdUser.phone_number).toBe(phone_number);
     });
 });

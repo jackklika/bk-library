@@ -9,7 +9,9 @@
 - Implement full CRUD functionality
 - Implement full db migration
 - Auth, endpoints, and business logic
+- Phone number parsing / sms
 - Dockerfile
+- Fix db open handles on testing
 
 # "Nice-to-haves"
 - Functional forward-backward migration

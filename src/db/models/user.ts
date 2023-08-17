@@ -11,13 +11,13 @@ export class User {
     constructor(id: string, username: string, phone_number: string) {
         this.id = id
         this.username = username
-        this.phone_number = username;
+        this.phone_number = phone_number;
     }
 
-    static async create(username: string, password: string, phone_number: str, id: string = uuidv4()): Promise<User> {
+    static async create(username: string, phone_number: string, id: string = uuidv4()): Promise<User> {
 
         const res = await db.query(
-            'INSERT INTO users (id, username, phone_number) VALUES ($1, $2, $3, $4) RETURNING *',
+            'INSERT INTO users (id, username, phone_number) VALUES ($1, $2, $3) RETURNING *',
             [id, username, phone_number]
         );
         const createdUser = new User(res.rows[0].id, res.rows[0].username, res.rows[0].phone_number);
