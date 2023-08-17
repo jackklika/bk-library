@@ -1,8 +1,8 @@
-import { Pool, QueryResult } from 'pg';
+import { Pool, QueryResult, QueryResultRow } from 'pg';
 
 export class DB {
   host: string = "localhost";
-  port: number = 5432;
+  port: number = 5439; // non standard
   user: string = "postgres";
   password: string = "password";
   database: string = "postgres";
@@ -20,8 +20,12 @@ export class DB {
     });
   }
 
-  async query<T = any>(text: string, params?: any[]): Promise<QueryResult<T>> {
+  async query<T extends QueryResultRow = any>(text: string, params?: any[]): Promise<QueryResult<T>> {
     return this.pool.query<T>(text, params);
+  }
+
+  async close() {
+    await this.pool.end();
   }
 
 }
