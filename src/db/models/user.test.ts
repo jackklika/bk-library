@@ -28,6 +28,5 @@ describe('User Model', () => {
         const user = await createSampleUser()
         expect(user.username)
         expect(user.phone_number)
-
     });
 });

@@ -9,6 +9,7 @@
 - Implement full CRUD functionality
 - Implement full db migration
 - Auth, endpoints, and business logic
+- Not allow duplicate phone numbers
 - Phone number parsing / sms
 - Dockerfile
 - Fix db open handles on testing
