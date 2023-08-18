@@ -41,40 +41,45 @@ export class SignupToken {
         return new SignupToken(id, otp_code, expiry, retries, phone_number);
     }
 
-    static async delete(id: string, phone_number: string): Promise<void> {
-        await db.query(
-            'DELETE FROM signup_tokens WHERE id = $1 and phone_number = $2',
-            [id, phone_number]
-        );
-    }
-
-    static async challenge(phone_number: string, otp_code: string): Promise<{ success: boolean, token?: SignupToken, error?: string }> {
+    static async getByPhoneNumber(phone_number: string): Promise<SignupToken | null> {
         const result = await db.query(
-            `SELECT * FROM signup_tokens WHERE phone_number = $1 AND otp_code = $2 AND expiry < (NOW() at time zone 'utc')`,
-            [phone_number, otp_code]
+            'SELECT * FROM signup_tokens WHERE phone_number = $1',
+            [phone_number]
         );
 
         if (result.rows.length === 0) {
-            return { success: false, error: 'Incorrect OTP code or token expired' };
+            return null
         }
-
-        const row = result.rows[0];
-        const foundToken = new SignupToken(row.id, row.otp_code, row.expiry, row.retries, row.phone_number);
-
-        return { success: true, token: foundToken };
+        else {
+            const row = result.rows[0];
+            return new SignupToken(row.id, row.otp_code, row.expiry, row.retries, row.phone_number);
+        }
     }
 
-    static async decrementRetries(id: string): Promise<SignupToken | null> {
-        const result = await db.query(
-            'UPDATE signup_tokens SET retries = retries - 1 WHERE id = $1 RETURNING *',
+    static async deleteById(id: string): Promise<void> {
+        await db.query(
+            'DELETE FROM signup_tokens WHERE id = $1',
             [id]
+        );
+    }
+
+    static async decrementRetries(phone_number: string): Promise<SignupToken | null> {
+        /*
+        Decrements retries and deletes if no retries are left.
+        */
+        const result = await db.query(
+            'UPDATE signup_tokens SET retries = retries - 1 WHERE phone_number = $1 RETURNING *',
+            [phone_number]
         );
 
         const row = result.rows[0];
-        if (row) {
-            return new SignupToken(row.id, row.otp_code, row.expiry, row.retries, row.phone_number);
+        if (!row) {
+            return null
+        } else if (row.retries === 0) {
+            await this.deleteById(row.id)
+            return null
         } else {
-            return null; 
+            return new SignupToken(row.id, row.otp_code, row.expiry, row.retries, row.phone_number);
         }
     }
 }

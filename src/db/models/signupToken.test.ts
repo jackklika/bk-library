@@ -29,15 +29,4 @@ describe('SignupToken', () => {
         expect(token.retries).toBe(DEFAULT_RETRIES_COUNT)
     })
 
-    test('challenge should work', async () => {
-        const phone_number = generateRandomPhoneNumber();
-
-        const token = await SignupToken.create({ phone_number: phone_number })
-
-        const result = await SignupToken.challenge(phone_number, token.otp_code)
-
-        expect(result.success).toBe(true)
-
-    })
-
 });
