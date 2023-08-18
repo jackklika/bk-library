@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { SignupToken } from '../db/models/signupToken';
+import { signup_challenge } from '../logic/auth';
 
 import { TwilioMock } from '../sms/twilioMock';
 
@@ -39,7 +39,7 @@ authRouter.post('/api/auth/register', async (req, res) => {
             return res.status(400).json({ error: 'Required fields are missing' });
         }
 
-        const result = await SignupToken.challenge(phone_number, otp_code);
+        const result = await signup_challenge(phone_number, otp_code);
 
 
         if (result.success) {

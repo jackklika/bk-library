@@ -1,5 +1,6 @@
 import { DB } from '../db';
 import { v4 as uuidv4 } from 'uuid';
+import { Book } from './book';
 
 const db = new DB();
 
@@ -41,8 +42,21 @@ export class Bookshelf {
             res.rows[0].library_id, 
             res.rows[0].user_id
         );
-        console.log(bookshelf)
         return bookshelf
+    }
 
+    async addBookById(book_id: string): Promise<void> {
+        await db.query(
+            'INSERT INTO bookshelf_book (book_id, bookshelf_id) VALUES ($1, $2)',
+            [book_id, this.id]
+        );
+    }
+
+    async getBooks(): Promise<Book[]> {
+        const res = await db.query(
+            'SELECT b.* FROM books b INNER JOIN bookshelf_book bb ON b.id = bb.book_id WHERE bb.bookshelf_id = $1',
+            [this.id]
+        );
+        return res.rows.map(row => new Book(row.id, row.title));
     }
 }

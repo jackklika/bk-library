@@ -3,6 +3,8 @@ import { DB } from '../db';
 import { v4 as uuidv4 } from 'uuid';
 import crypto from 'crypto';
 import { createSampleUser } from '../../test_fixtures/user';
+import { Bookshelf } from './bookshelf';
+import { createSampleLibrary } from '../../test_fixtures/library';
 
 const db = new DB();
 
@@ -36,4 +38,21 @@ describe('User Model', () => {
         expect(user.username)
         expect(user.phone_number)
     });
+
+    test('can create bookshelves and get them', async () => {
+        const user = await createSampleUser()
+        const library = await createSampleLibrary()
+
+        var bookshelves = await user.getBookshelves()
+        expect(bookshelves.length).toBe(0)
+
+        const created_bookshelf = await Bookshelf.create("test name", library.id, user.id)
+
+        var bookshelves = await user.getBookshelves()
+        expect(bookshelves.length).toBe(1)
+        expect(bookshelves[0].id).toBe(created_bookshelf.id)
+        expect(bookshelves[0].user_id).toBe(user.id)
+    });
+
+
 });

@@ -1,3 +1,4 @@
+import { createSampleBook } from '../../test_fixtures/book';
 import { createSampleBookshelf } from '../../test_fixtures/bookshelf';
 import { createSampleLibrary } from '../../test_fixtures/library';
 import { createSampleUser } from '../../test_fixtures/user';
@@ -32,6 +33,19 @@ describe('Bookshelf', () => {
         const found_bookshelf = await Bookshelf.getById(bookshelf.id);
         expect(found_bookshelf?.id).toBe(bookshelf.id);
         expect(found_bookshelf?.name).toBe(bookshelf.name);
+    });
+
+    test('can add books and retrieve them by bookshelf', async () => {
+        const bookshelf = await createSampleBookshelf();
+        const book = await createSampleBook()
+
+        var bookshelf_books = await bookshelf.getBooks()
+        expect(bookshelf_books.length).toBe(0)
+
+        bookshelf.addBookById(book.id)
+
+        var bookshelf_books = await bookshelf.getBooks()
+        expect(bookshelf_books.length).toBe(1)
     });
 
     test('should have fixture', async () => {

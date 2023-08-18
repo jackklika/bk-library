@@ -1,0 +1,37 @@
+import { Book } from "../db/models/book";
+import { Bookshelf } from "../db/models/bookshelf";
+import { Library } from "../db/models/library";
+import { User } from "../db/models/user";
+
+async function getBooks(bookshelf_id: string, user_id: string): Promise<{ success: boolean, error?: string, books?: Book[] }> {
+    /*
+    Get all books in a bookshelf.
+
+    The bookshelf must be owned by the user.
+
+    todo:
+    - Create response with Bookshelf and Books
+    */
+
+    const user = await User.getById(user_id)
+    if (!user) {
+        return {success: false, error: "User not found"}
+    }
+
+    const bookshelf = await Bookshelf.getById(bookshelf_id)
+    if (!bookshelf) {
+        return {success: false, error: "Bookshelf not found"}
+    }
+
+    const user_libraries = await user.getLibraries()
+    if (user_libraries.length === 0) {
+        return {success: false, error: "User has no libraries"}
+    }
+
+    if (!user_libraries.some(library => library.id === bookshelf.library_id)) {
+        return { success: false, error: "Bookshelf does not belong to user" };
+    }
+
+    return { success: true, books: await bookshelf.getBooks() }
+    
+}
