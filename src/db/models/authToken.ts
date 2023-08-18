@@ -1,3 +1,4 @@
+import { getUTCDateHoursFromNow } from '../../utils/time';
 import { DB } from '../db'; // Assume this is your DB class
 import { v4 as uuidv4 } from 'uuid';
 
@@ -27,9 +28,12 @@ export class AuthToken {
         this.user_id = user_id
     }
 
-    static async create({ otp_code, user_id, retries = DEFAULT_RETRIES_COUNT, expiry = new Date(new Date().setHours(new Date().getHours() + DEFAULT_EXPIRY_HOURS)) }: 
-    { otp_code: string; user_id: string, retries?: number, expiry?: Date }): Promise<AuthToken> {
-        const id = uuidv4(); 
+    static async create({ user_id, retries = DEFAULT_RETRIES_COUNT, expiry = getUTCDateHoursFromNow(DEFAULT_EXPIRY_HOURS) }: 
+    { user_id: string, retries?: number, expiry?: Date }): Promise<AuthToken> {
+
+        const id = uuidv4();  
+        const otp_code = "11233" // todo randomly generate
+
         await db.query(
             'INSERT INTO auth_tokens (id, otp_code, expiry, retries, user_id) VALUES ($1, $2, $3, $4, $5)',
             [id, otp_code, expiry, retries, user_id]
@@ -46,7 +50,7 @@ export class AuthToken {
 
     static async findByUserId(user_id: string): Promise<AuthToken[]> {
         const result = await db.query(
-            'SELECT * FROM auth_tokens WHERE user_id = $1 AND expiry > NOW()',
+            `SELECT * FROM auth_tokens WHERE user_id = $1 AND expiry > (NOW() at time zone 'utc')`,
             [user_id]
         );
 

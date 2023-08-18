@@ -1,7 +1,8 @@
 # Running
 
 - Install dependencies
-- Run docker compose
+- Run docker compose (to get postgres going)
+- Copy-paste the sql from the `setup.ts` into the postgres console (better migrations coming soon)
 - `npm start`
 
 # Todos
@@ -21,3 +22,4 @@
 - Linting, QA, cicd, automatic deployment, etc
 
 # Notes
+- AuthToken and SignupToken share a lot in common; their only major difference is AuthToken being for a user and SignupToken to verify the identity of a phone number to create a user. This could be better thought-out.
