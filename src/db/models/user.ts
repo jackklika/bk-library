@@ -14,7 +14,9 @@ export class User {
         this.phone_number = phone_number;
     }
 
-    static async create(username: string, phone_number: string, id: string = uuidv4()): Promise<User> {
+    static async create(username: string, phone_number: string): Promise<User> {
+
+        const id = uuidv4();
 
         const res = await db.query(
             'INSERT INTO users (id, username, phone_number) VALUES ($1, $2, $3) RETURNING *',

@@ -13,7 +13,10 @@
 - Dockerfile
 - Fix db open handles on testing
 
+
 # "Nice-to-haves"
 - Functional forward-backward migration
 - More robust models that inherit a parent model
 - Linting, QA, cicd, automatic deployment, etc
+
+# Notes
