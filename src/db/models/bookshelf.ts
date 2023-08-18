@@ -28,4 +28,21 @@ export class Bookshelf {
         );
         return new Bookshelf(id, name, organization, library_id, user_id);
     }
+
+    static async getById(id: string): Promise<Bookshelf | null> {
+        const res = await db.query(
+            'SELECT id, name, organization, library_id, user_id FROM bookshelves WHERE id = $1',
+            [id]
+        );
+        const bookshelf = new Bookshelf(
+            res.rows[0].id, 
+            res.rows[0].name, 
+            res.rows[0].organization, 
+            res.rows[0].library_id, 
+            res.rows[0].user_id
+        );
+        console.log(bookshelf)
+        return bookshelf
+
+    }
 }

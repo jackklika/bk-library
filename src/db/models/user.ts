@@ -28,7 +28,7 @@ export class User {
 
     static async getById(id: string): Promise<User> {
         const res = await db.query(
-            'SELECT (id, username, phone_number) FROM users WHERE id = $1',
+            'SELECT id, username, phone_number FROM users WHERE id = $1',
             [id]
         );
         const foundUser = new User(res.rows[0].id, res.rows[0].username, res.rows[0].phone_number);

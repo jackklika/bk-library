@@ -24,6 +24,13 @@ describe('User Model', () => {
             expect(createdUser.phone_number).toBe(phone_number);
     });
 
+    test('can get by id', async () => {
+        const user = await createSampleUser()
+
+        const found_user = await User.getById(user.id);
+        expect(found_user?.id).toBe(user.id);
+    });
+
     test('should have a fixture', async () => {
         const user = await createSampleUser()
         expect(user.username)

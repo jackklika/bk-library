@@ -26,6 +26,14 @@ describe('Bookshelf', () => {
         expect(bookshelf.library_id).toBe(sampleLibrary.id);
     });
 
+    test('can find by id', async () => {
+        const bookshelf = await createSampleBookshelf();
+
+        const found_bookshelf = await Bookshelf.getById(bookshelf.id);
+        expect(found_bookshelf?.id).toBe(bookshelf.id);
+        expect(found_bookshelf?.name).toBe(bookshelf.name);
+    });
+
     test('should have fixture', async () => {
         const bookshelf = await createSampleBookshelf();
         expect(bookshelf.id);
