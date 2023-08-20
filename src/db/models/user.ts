@@ -76,4 +76,24 @@ export class User {
         return res.rows.map(row => new Library(row.id, row.name));
 
     }
+
+    async getAvailableBookshelves(): Promise<Bookshelf[]> {
+        const sql = `
+        SELECT b.id, b.name, b.library_id, b.user_id, b.organization
+        FROM bookshelves b
+        JOIN library_user lu ON b.library_id = lu.library_id
+        WHERE lu.user_id = $1
+        `;
+
+        const result = await db.query(sql, [this.id]);
+
+        return result.rows.map(row => new Bookshelf(
+            row.id,
+            row.name,
+            row.organization,
+            row.library_id,
+            row.user_id,
+        ))
+
+    }
 }

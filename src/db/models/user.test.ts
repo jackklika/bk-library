@@ -54,5 +54,30 @@ describe('User Model', () => {
         expect(bookshelves[0].user_id).toBe(user.id)
     });
 
+    test('can create bookshelves and get them', async () => {
+        const user1 = await createSampleUser()
+        const user2 = await createSampleUser()
+
+        const library = await createSampleLibrary()
+
+        var bookshelves = await user1.getAvailableBookshelves()
+        expect(bookshelves.length).toBe(0)
+
+        // Add user2 to a library...
+        await library.addUser(user2.id)
+        const user2_bookshelf = await Bookshelf.create("test name", library.id, user2.id)
+        // ...and user1 should not be able to see its bookshelf.
+        var bookshelves = await user1.getAvailableBookshelves()
+        expect(bookshelves.length).toBe(0)
+
+        // Add user1 to the library...
+        await library.addUser(user1.id)
+        var bookshelves = await user1.getAvailableBookshelves()
+        // ...and user1 should see user2's bookshelf.
+        expect(bookshelves.length).toBe(1)
+        expect(bookshelves[0].id).toBe(user2_bookshelf.id)
+        expect(bookshelves[0].user_id).toBe(user2_bookshelf.user_id)
+    });
+
 
 });

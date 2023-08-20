@@ -1,22 +1,18 @@
 # Running
 
 - Install dependencies
-- Run docker compose (to get postgres going)
+- Run docker compose to get postgres going: `docker-compose -f docker-compose.yaml up`
 - Copy-paste the sql from the `setup.ts` into the postgres console (better migrations coming soon)
 - `npm start`
 
-# Todos
 
-- Implement full CRUD functionality
-- Implement full db migration
-- Auth, endpoints, and business logic
+# Todos
 - Not allow duplicate phone numbers
 - Phone number parsing / sms
 - Dockerfile
 - Fix db open handles on testing
-
-
-# "Nice-to-haves"
+- Refactor functions to use named parameters to reduce possible errors, 
+  creating parameter interfaces for certain operations like user creation params.
 - Functional forward-backward migration
 - More robust models that inherit a parent model
 - Linting, QA, cicd, automatic deployment, etc
