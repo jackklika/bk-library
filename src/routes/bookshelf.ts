@@ -1,5 +1,6 @@
 import express from 'express';
 import { getBooks, createBookshelf } from '../logic/bookshelf'; 
+import { AuthenticatedRequest, authenticate } from './middleware/auth';
 
 const bookshelfRouter = express.Router();
 
@@ -20,7 +21,7 @@ bookshelfRouter.post('/api/bookshelves', async (req, res) => {
     }
 });
 
-bookshelfRouter.get('/api/bookshelves/:id/books', async (req, res) => {
+bookshelfRouter.get('/api/bookshelves/:id/books', authenticate, async (req: AuthenticatedRequest, res) => {
     /*
     Get all books in a bookshelf. User must have access to bookshelf.
     */
@@ -28,11 +29,15 @@ bookshelfRouter.get('/api/bookshelves/:id/books', async (req, res) => {
     try {
         const bookshelf_id = req.params.id;
 
+        if (!req.user_id) {
+            return res.status(400).json({ error: 'Authentication is required' });
+        }
+
         if (!bookshelf_id) {
             return res.status(400).json({ error: 'ID is required' });
         }
 
-        const books = await getBooks(bookshelf_id, "user_id");
+        const books = await getBooks(bookshelf_id, req.user_id);
 
         res.status(200).json(books);
     } catch (error) {
