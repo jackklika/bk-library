@@ -41,6 +41,19 @@ export class User {
         return foundUser;
     }
 
+    static async getByPhoneNumber(phone_number: string): Promise<User | null> {
+        const res = await db.query(
+            'SELECT id, username, phone_number FROM users WHERE phone_number = $1',
+            [phone_number]
+        );
+        if (res.rows.length === 0){
+            return null
+        }
+
+        const foundUser = new User(res.rows[0].id, res.rows[0].username, res.rows[0].phone_number);
+        return foundUser;
+    }
+
     async getBookshelves(): Promise<Bookshelf[]> {
         /*
         Get the user's bookshelves.

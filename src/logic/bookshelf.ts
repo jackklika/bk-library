@@ -1,9 +1,9 @@
 import { Book } from "../db/models/book";
-import { Bookshelf } from "../db/models/bookshelf";
+import { Bookshelf, DEFAULT_BOOKSHELF_ORGANIZATION } from "../db/models/bookshelf";
 import { Library } from "../db/models/library";
 import { User } from "../db/models/user";
 
-async function getBooks(bookshelf_id: string, user_id: string): Promise<{ success: boolean, error?: string, books?: Book[] }> {
+export async function getBooks(bookshelf_id: string, user_id: string): Promise<{ success: boolean, error?: string, books?: Book[] }> {
     /*
     Get all books in a bookshelf.
 
@@ -34,4 +34,8 @@ async function getBooks(bookshelf_id: string, user_id: string): Promise<{ succes
 
     return { success: true, books: await bookshelf.getBooks() }
     
+}
+
+export async function createBookshelf(name: string, library_id: string, user_id: string, organization: string = DEFAULT_BOOKSHELF_ORGANIZATION): Promise<Bookshelf> {
+    return await Bookshelf.create(name, library_id, user_id, organization);
 }

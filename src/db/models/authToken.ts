@@ -41,20 +41,25 @@ export class AuthToken {
         return new AuthToken(id, otp_code, expiry, retries, user_id);
     }
 
-    static async delete(id: string, user_id: string): Promise<void> {
+    static async deleteById(id: string): Promise<void> {
         await db.query(
-            'DELETE FROM auth_tokens WHERE id = $1 and user_id = $2',
-            [id, user_id]
+            'DELETE FROM auth_tokens WHERE id = $1',
+            [id]
         );
     }
 
-    static async findByUserId(user_id: string): Promise<AuthToken[]> {
+    static async findByUserId(user_id: string): Promise<AuthToken | null> {
         const result = await db.query(
-            `SELECT * FROM auth_tokens WHERE user_id = $1 AND expiry > (NOW() at time zone 'utc')`,
+            `SELECT * FROM auth_tokens WHERE user_id = $1`,
             [user_id]
         );
 
-        return result.rows.map(row => new AuthToken(row.id, row.otp_code, row.expiry, row.retries, row.user_id));
+        if (result.rows.length === 0) {
+            return null
+        }
+
+        const tokens = result.rows.map(row => new AuthToken(row.id, row.otp_code, row.expiry, row.retries, row.user_id));
+        return tokens[tokens.length - 1] // todo: Handle this better via db constraints
     }
 
     static async decrementRetries(id: string): Promise<AuthToken | null> {

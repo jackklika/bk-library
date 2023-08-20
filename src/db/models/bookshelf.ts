@@ -4,6 +4,8 @@ import { Book } from './book';
 
 const db = new DB();
 
+export const DEFAULT_BOOKSHELF_ORGANIZATION = "SEQUENTIAL"
+
 export class Bookshelf {
     id: string;
     name: string;
@@ -21,7 +23,7 @@ export class Bookshelf {
         this.user_id = user_id;
     }
 
-    static async create(name: string, library_id: string, user_id: string, organization: string = "SEQUENTIAL"): Promise<Bookshelf> {
+    static async create(name: string, library_id: string, user_id: string, organization: string = DEFAULT_BOOKSHELF_ORGANIZATION): Promise<Bookshelf> {
         const id = uuidv4();
         await db.query(
             'INSERT INTO bookshelves (id, name, organization, library_id, user_id) VALUES ($1, $2, $3, $4, $5)',

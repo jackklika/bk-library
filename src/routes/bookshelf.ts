@@ -1,5 +1,5 @@
 import express from 'express';
-import { Bookshelf } from '../db/models/bookshelf'; // Path to your Bookshelf class
+import { getBooks, createBookshelf } from '../logic/bookshelf'; 
 
 const bookshelfRouter = express.Router();
 
@@ -11,7 +11,7 @@ bookshelfRouter.post('/api/bookshelves', async (req, res) => {
             return res.status(400).json({ error: 'Required fields are missing' });
         }
 
-        const bookshelf = await Bookshelf.create(name, library_id, user_id, organization);
+        const bookshelf = await createBookshelf(name, library_id, user_id, organization);
 
         res.status(201).json(bookshelf);
     } catch (error) {
@@ -20,21 +20,21 @@ bookshelfRouter.post('/api/bookshelves', async (req, res) => {
     }
 });
 
-bookshelfRouter.get('/api/bookshelves/:id', async (req, res) => {
-    try {
-        const id = req.params.id;
+bookshelfRouter.get('/api/bookshelves/:id/books', async (req, res) => {
+    /*
+    Get all books in a bookshelf. User must have access to bookshelf.
+    */
 
-        if (!id) {
+    try {
+        const bookshelf_id = req.params.id;
+
+        if (!bookshelf_id) {
             return res.status(400).json({ error: 'ID is required' });
         }
 
-        const bookshelf = await Bookshelf.getById(id);
+        const books = await getBooks(bookshelf_id, "user_id");
 
-        if (!bookshelf) {
-            return res.status(404).json({ error: 'Bookshelf not found' });
-        }
-
-        res.status(200).json(bookshelf);
+        res.status(200).json(books);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'An error occurred while retrieving the bookshelf' });
