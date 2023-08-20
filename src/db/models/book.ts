@@ -35,6 +35,7 @@ export class Book {
     }
 
     static async findByUser(userId: string): Promise<Book[]> {
+        // Get all books from user bookshelves
         const res = await db.query(
             'SELECT b.* FROM books b INNER JOIN bookshelf_book bb ON b.id = bb.book_id INNER JOIN bookshelves bs ON bb.bookshelf_id = bs.id WHERE bs.user_id = $1',
             [userId]

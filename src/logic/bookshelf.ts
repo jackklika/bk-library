@@ -1,6 +1,5 @@
 import { Book } from "../db/models/book";
 import { Bookshelf, DEFAULT_BOOKSHELF_ORGANIZATION } from "../db/models/bookshelf";
-import { Library } from "../db/models/library";
 import { User } from "../db/models/user";
 
 export async function getBooks(bookshelf_id: string, user_id: string): Promise<{ success: boolean, error?: string, books?: Book[] }> {
@@ -38,4 +37,12 @@ export async function getBooks(bookshelf_id: string, user_id: string): Promise<{
 
 export async function createBookshelf(name: string, library_id: string, user_id: string, organization: string = DEFAULT_BOOKSHELF_ORGANIZATION): Promise<Bookshelf> {
     return await Bookshelf.create(name, library_id, user_id, organization);
+}
+
+export async function addBook(bookshelf_id: string, book_id: string): Promise<void> {
+    const bookshelf = await Bookshelf.getById(bookshelf_id)
+    if (!bookshelf) {
+        throw new Error("Bookshelf not found")
+    }
+    return await bookshelf.addBookById(book_id)
 }
