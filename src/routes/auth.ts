@@ -48,13 +48,10 @@ authRouter.post('/api/auth/register', async (req, res) => {
         const result = await signup_challenge(phone_number, otp_code);
 
         if (result.success) {
-            // todo: 
-            // - create user 
             const user = await createUser(username, phone_number)
             const token = await generateToken(user.id)
             res.status(200).json({ token: token });
         } else {
-            //await SignupToken.decrementRetries(result.token.id)
             res.status(400).json({ error: 'Incorrect OTP code or token expired' });
         }
 
